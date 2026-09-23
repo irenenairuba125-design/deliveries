@@ -1,0 +1,20 @@
+{
+  "name": "food-delivery-platform",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w client",
+    "start": "npm run start -w server",
+    "seed:reset": "npm run seed:reset -w server",
+    "test": "npm test -w server",
+    "create-account": "npm run create-account -w server --"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

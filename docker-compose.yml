@@ -1,0 +1,50 @@
+# Full production-like stack: app + PostgreSQL/PostGIS + Redis.
+#   cp .env.example .env   (set AUTH_SECRET and any payment keys)
+#   docker compose up --build
+# Scale the app with `docker compose up --scale app=3` behind a load balancer
+# that supports WebSockets; Redis keeps sockets, jobs and rate limits in sync.
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://chakula:chakula@db:5432/chakula
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: production
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_USER: chakula
+      POSTGRES_PASSWORD: chakula
+      POSTGRES_DB: chakula
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chakula"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:

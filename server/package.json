@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=../.env --watch --disable-warning=ExperimentalWarning src/index.js",
+    "start": "node --env-file-if-exists=../.env --disable-warning=ExperimentalWarning src/index.js",
+    "seed:reset": "node --disable-warning=ExperimentalWarning src/seed.js --reset",
+    "test": "node --test --test-concurrency=1 --disable-warning=ExperimentalWarning \"test/**/*.test.js\"",
+    "create-account": "node --env-file-if-exists=../.env --disable-warning=ExperimentalWarning src/createAccount.js"
+  },
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bullmq": "^6.3.8",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "ioredis": "^6.0.0",
+    "pg": "^8.23.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.3"
+  }
+}
