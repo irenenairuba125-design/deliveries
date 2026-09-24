@@ -155,10 +155,10 @@ The suite starts real server processes. It covers:
 
 Vercel runs short-lived functions, so it can't host the server: live tracking needs WebSockets that stay open, and delayed jobs need a process that keeps running. The server therefore runs on Render, and Vercel serves only the website.
 
-1. **Render:** go to render.com, then New → Blueprint, and pick this repo.  creates the server () and a free PostgreSQL database. It also generates  and seeds the demo data.
-2. **Vercel:**  (or , when the project's Root Directory is ) builds only the website. The build points it at the Render server with .
+1. **Render:** go to render.com, then New → Blueprint, and pick this repo. `render.yaml` creates the server (`food-delivery-platform-api`) and a free PostgreSQL database. It also generates `AUTH_SECRET` and seeds the demo data.
+2. **Vercel:** `vercel.json` (or `server/vercel.json`, when the project's Root Directory is `server`) builds only the website. The build points it at the Render server with `VITE_API_ORIGIN`.
 
-If Render gives the service a different URL, update  in both  files. If the website is on a different address, update  in .
+If Render gives the service a different URL, update `VITE_API_ORIGIN` in both `vercel.json` files. If the website is on a different address, update `CORS_ORIGIN` in `render.yaml`.
 
 Render's free plan sleeps after 15 minutes without traffic, so the first request after that takes about a minute. Free databases expire after 30 days, so upgrade before real use.
 
