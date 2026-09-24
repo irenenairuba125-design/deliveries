@@ -1,0 +1,35 @@
+# Render Blueprint: the API + WebSocket server and a PostgreSQL database.
+# Deploy: render.com -> New -> Blueprint -> pick this repo -> Apply.
+# The website on Vercel talks to this service; it also serves the full app itself.
+services:
+  - type: web
+    name: food-delivery-platform-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: food-delivery-platform-db
+          property: connectionString
+      - key: TRUST_PROXY
+        value: "1"
+      - key: CORS_ORIGIN
+        value: https://food-delivery-platform-server.vercel.app
+      # Fills an empty database with the demo restaurants and accounts. Remove for real launch.
+      - key: SEED_DEMO
+        value: "1"
+
+databases:
+  - name: food-delivery-platform-db
+    plan: free
+    databaseName: chakula
+    user: chakula

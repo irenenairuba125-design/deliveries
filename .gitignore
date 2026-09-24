@@ -2,3 +2,5 @@ node_modules
 dist
 server/data
 .env
+server/vercel-dist
+.vercel

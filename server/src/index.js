@@ -25,7 +25,9 @@ await startJobs();
 
 const app = express();
 app.disable('x-powered-by');
-if (process.env.TRUST_PROXY) app.set('trust proxy', process.env.TRUST_PROXY === 'true' ? true : process.env.TRUST_PROXY);
+// 'true', a hop count (e.g. 1), or a list of proxy addresses.
+const trustProxy = process.env.TRUST_PROXY;
+if (trustProxy) app.set('trust proxy', trustProxy === 'true' ? true : /^\d+$/.test(trustProxy) ? Number(trustProxy) : trustProxy);
 app.use(cors({ origin: process.env.CORS_ORIGIN?.split(',') ?? true }));
 app.use((_req, res, next) => {
   res.set({ 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'strict-origin-when-cross-origin', 'X-Frame-Options': 'DENY' });

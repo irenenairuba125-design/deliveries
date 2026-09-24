@@ -21,9 +21,13 @@ export const store = {
 };
 
 // ---------- REST ----------
+// Empty = same origin. Set at build time when the site and the API are hosted apart
+// (e.g. the website on Vercel, the server on Render).
+const API_ORIGIN = (import.meta.env.VITE_API_ORIGIN ?? '').replace(/\/$/, '');
+
 export async function api(path, { method = 'GET', body } = {}) {
   const token = store.get('token');
-  const res = await fetch(`/api${path}`, {
+  const res = await fetch(`${API_ORIGIN}/api${path}`, {
     method,
     headers: {
       ...(body !== undefined && { 'Content-Type': 'application/json' }),
@@ -45,7 +49,10 @@ let socket = null;
 export function getSocket() {
   const token = store.get('token');
   if (!token) return null;
-  if (!socket) socket = io({ auth: { token }, transports: ['websocket', 'polling'] });
+  if (!socket) {
+    const opts = { auth: { token }, transports: ['websocket', 'polling'] };
+    socket = API_ORIGIN ? io(API_ORIGIN, opts) : io(opts);
+  }
   return socket;
 }
 export function closeSocket() {
