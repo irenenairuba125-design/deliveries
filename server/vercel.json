@@ -1,8 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
+  "ignoreCommand": "exit 1",
   "installCommand": "cd .. && npm ci --include=dev",
   "buildCommand": "cd .. && VITE_API_ORIGIN=https://food-delivery-platform-api.onrender.com npm run build && rm -rf server/vercel-dist && cp -r client/dist server/vercel-dist",
   "outputDirectory": "vercel-dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

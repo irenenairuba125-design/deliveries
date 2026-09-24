@@ -27,14 +27,20 @@ const API_ORIGIN = (import.meta.env.VITE_API_ORIGIN ?? '').replace(/\/$/, '');
 
 export async function api(path, { method = 'GET', body } = {}) {
   const token = store.get('token');
-  const res = await fetch(`${API_ORIGIN}/api${path}`, {
-    method,
-    headers: {
-      ...(body !== undefined && { 'Content-Type': 'application/json' }),
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_ORIGIN}/api${path}`, {
+      method,
+      headers: {
+        ...(body !== undefined && { 'Content-Type': 'application/json' }),
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    // Network failure: offline, or the server is down / not deployed / still waking up.
+    throw new Error("Can't reach the server right now. Check your connection, or try again in a minute.");
+  }
   const data = res.status === 204 ? {} : await res.json().catch(() => ({}));
   if (!res.ok) {
     const err = new Error(data.error || `Request failed (${res.status})`);
